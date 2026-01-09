@@ -17,4 +17,6 @@ public interface UserService{
 
 	Optional<User> getActiveUserOpByEmail(String email);
 
+	void saveUser(User user);
+
 }

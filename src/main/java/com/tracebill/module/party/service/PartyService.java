@@ -1,17 +1,15 @@
 package com.tracebill.module.party.service;
 
-import java.util.Optional;
 
-import com.tracebill.module.party.dto.PartyDTO;
-import com.tracebill.module.party.dto.PartyRegisterModel;
-import com.tracebill.module.party.entity.Party;
-
-import jakarta.validation.Valid;
+import com.tracebill.module.party.enums.PartyType;
 
 public interface PartyService {
 
-	PartyDTO createParty(@Valid PartyRegisterModel model);
+	Long createParty(String email, Long parentPartyId, PartyType partyType);
 
-	Optional<Party> getPartyOpByEmailId(String email);
+	boolean existById(Long parentPartyId);
+
+	Long getPartyIdByEmail(String email);
+
 
 }

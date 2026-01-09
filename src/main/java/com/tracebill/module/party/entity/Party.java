@@ -29,14 +29,15 @@ import lombok.ToString;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString(exclude = {"parent", "children", "user", "billingEntity"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "party" ,
 	indexes = {
-    		@Index(name = "idx_users_email", columnList = "email")
+    		@Index(name = "idx_users_email", columnList = "email"),
+    		@Index(name = "idx_party_parent", columnList = "parentPartyId")
+
     }
 		)
 public class Party {
@@ -49,28 +50,10 @@ public class Party {
 	@Column(unique=true , nullable=false)
 	private String email;
 	
+	private Long parentPartyId;
 	
-	@OneToOne(fetch =FetchType.LAZY  , optional = false)
-	@JoinColumn(nullable = false , unique = true)
-	private User user;
-	
-	@OneToOne(fetch = FetchType.LAZY , optional = false)
-	@JoinColumn(nullable = false , unique = true)
-	private BillingEntity billingEntity;
-	
-	@ManyToOne(fetch = FetchType.LAZY )
-	@JoinColumn(name = "parent_id")
-	private Party parent;
-	
-	@OneToMany(
-		    fetch = FetchType.LAZY,
-		    mappedBy = "parent",
-		    cascade = CascadeType.ALL,
-		    orphanRemoval = true
-		)
-	private List<Party> children;
-	
-	private boolean active;
+	@Builder.Default
+	private boolean active = true;
 	
 	@Enumerated(EnumType.STRING)
     @Column(nullable = false)

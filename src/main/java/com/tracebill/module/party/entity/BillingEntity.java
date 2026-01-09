@@ -54,6 +54,9 @@ public class BillingEntity {
     @Column(name = "emailId" , nullable = false)
     private String emailId;
     
-    private Boolean registered; 
+    private Boolean registered;
+    
+    @Column(unique = true , nullable = false)
+    private Long partyId;
 }
 

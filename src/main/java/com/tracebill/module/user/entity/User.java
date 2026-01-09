@@ -1,6 +1,7 @@
 package com.tracebill.module.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tracebill.module.party.entity.Party;
 import com.tracebill.module.user.enums.UserRole;
 
 import jakarta.persistence.Column;
@@ -11,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -55,6 +57,9 @@ public class User {
     @Column(nullable = false, unique = true, length = 42)
     @JsonIgnore
     private String walletAddress;
+    
+    @Column(nullable = false , unique = true)
+    private Long partyId;
 
     
 }

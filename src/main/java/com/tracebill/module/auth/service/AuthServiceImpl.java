@@ -28,16 +28,6 @@ public class AuthServiceImpl implements AuthService{
 	
 	private final JWTUtils jwtUtils;
 	
-	@Override
-	public void createUser(@Valid RegisterUserModel model) {
-		
-		String hashedPassword = passEncoder.encode(model.getPassword());
-		
-		CreateUserModel createModel = UserMapper.toCreateUserModel(model, hashedPassword);
-		
-		userService.saveUser(createModel);
-		
-	}
 
 	@Override
 	public LoginResponse authenticate(@Valid LoginUserModel model) {
@@ -53,4 +43,15 @@ public class AuthServiceImpl implements AuthService{
 		
 	}
 
+
+	@Override
+	public void createUser(@Valid RegisterUserModel model) {
+		
+		String hashedPassword = passEncoder.encode(model.getPassword());
+		
+		CreateUserModel createModel = UserMapper.toCreateUserModel(model, hashedPassword);
+		
+		userService.saveUser(createModel);
+		
+	}
 }

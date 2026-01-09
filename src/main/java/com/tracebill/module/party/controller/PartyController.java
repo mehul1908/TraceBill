@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tracebill.dto.ApiResponse;
-import com.tracebill.module.party.dto.PartyDTO;
-import com.tracebill.module.party.dto.PartyRegisterModel;
-import com.tracebill.module.party.service.PartyService;
+import com.tracebill.module.party.dto.BillingEntityRegisterModel;
+import com.tracebill.module.party.service.BillingEntityService;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -22,14 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 public class PartyController {
 
 	@Autowired
-    private PartyService partyService;
+	private BillingEntityService billingEntityService;
 	
 	@PostMapping("/")
-	public ResponseEntity<ApiResponse> createParty(@RequestBody @Valid PartyRegisterModel model){
+	public ResponseEntity<ApiResponse> createBillingEntity(@RequestBody @Valid BillingEntityRegisterModel model){
 		
-		PartyDTO party = partyService.createParty(model);
+		billingEntityService.createBillingEntity(model);
 		
-		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true,party , "Party Created Successfully"));
+		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, null , "Billing Entity Created Successfully"));
 		
 		
 	}

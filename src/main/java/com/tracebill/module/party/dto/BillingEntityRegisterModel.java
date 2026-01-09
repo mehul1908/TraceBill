@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PartyRegisterModel {
+public class BillingEntityRegisterModel {
 
 	@NotBlank(message = "Email Id cannot be blank")
 	@Email(message = "Email must be in correct format")
