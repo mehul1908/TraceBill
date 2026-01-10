@@ -1,6 +1,7 @@
 package com.tracebill.module.production.entity;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,16 +42,16 @@ public class Product {
 	private String prodCode;
 	
 	@Column(nullable = false)
-	private BigDecimal MRP;
+	private BigDecimal mrp;
 	
 	@Builder.Default
 	private List<BigDecimal> defaultRate = new ArrayList<>(3);
 	
 	@Column(nullable=false)
-	private BigDecimal gstRate;
+	private BigInteger gstRate;
 	
 	@Column(nullable=false)
-	private BigDecimal cessRate;
+	private BigInteger cessRate;
 	
 	private String productHash;
 	
