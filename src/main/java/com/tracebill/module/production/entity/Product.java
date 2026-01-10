@@ -46,8 +46,11 @@ public class Product {
 	@Builder.Default
 	private List<BigDecimal> defaultRate = new ArrayList<>(3);
 	
-	@Column(nullable = false)
-	private Long taxSlabId; // taxslab id
+	@Column(nullable=false)
+	private BigDecimal gstRate;
+	
+	@Column(nullable=false)
+	private BigDecimal cessRate;
 	
 	private String productHash;
 	

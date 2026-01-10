@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tracebill.module.party.entity.Party;
 import com.tracebill.module.party.enums.PartyType;
 import com.tracebill.module.party.service.PartyService;
 import com.tracebill.module.user.dto.CreateUserModel;
@@ -66,10 +67,15 @@ public class UserServiceImpl implements UserService{
 		}
 		
 		Long partyId = null;
-		
 		if(model.getRole() != UserRole.ROLE_ADMIN && model.getRole() != UserRole.ROLE_TRANSPORTER) {
-			partyId = partyService.getPartyIdByEmail(model.getEmail());
+			Party party = partyService.getPartyByEmail(model.getEmail());
+			partyId = party.getPartyId();
+			if(!model.getEmail().equals(party.getEmail())) {
+				throw new IllegalArgumentException("Email Id does not match with party");
+			}
 		}
+		
+		
 		
 		User savedUser = User.builder().
 				email(model.getEmail()).

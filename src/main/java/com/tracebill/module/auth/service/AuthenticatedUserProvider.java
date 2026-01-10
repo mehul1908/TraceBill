@@ -11,7 +11,7 @@ import com.tracebill.module.user.entity.User;
 @Component
 public class AuthenticatedUserProvider {
 
-    public User getAuthenticatedUser() {
+    public Long getAuthenticatedParty() {
     	System.out.println("In get Authenticated User");
     	Authentication auth =
                 SecurityContextHolder.getContext().getAuthentication();
@@ -22,7 +22,7 @@ public class AuthenticatedUserProvider {
         }
         
         SecurityUser secUser = (SecurityUser) auth.getPrincipal();
-        return secUser.getUser();
+        return secUser.getUser().getPartyId();
     }
 }
 

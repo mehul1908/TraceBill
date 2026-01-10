@@ -53,4 +53,16 @@ public class PartyServiceImpl implements PartyService {
 		return partyOp.get().getPartyId();
 	}
 
+	@Override
+	public Party getPartyById(Long manufacturerId) {
+		return partyRepo.findById(manufacturerId)
+				.orElseThrow(() -> new PartyNotFoundException(manufacturerId));
+	}
+
+	@Override
+	public Party getPartyByEmail(String email) {
+		return partyRepo.findByEmail(email)
+				.orElseThrow(() -> new PartyNotFoundException(email));
+	}
+
 }

@@ -13,6 +13,5 @@ public interface PartyRepo extends JpaRepository<Party, Long> {
 
 	Optional<Party> findByEmail(String email);
 
-	Optional<Party> findByEmailAndNotType(String email, PartyType type);
 
 }

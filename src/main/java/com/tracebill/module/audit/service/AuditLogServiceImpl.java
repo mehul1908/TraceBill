@@ -25,7 +25,7 @@ public class AuditLogServiceImpl implements AuditLogService{
 	
 	@Override
 	public void create(AuditAction action, String metadata) {
-		User performedBy = authenticatedUser.getAuthenticatedUser();
+		Long performedBy = authenticatedUser.getAuthenticatedParty();
 		AuditLog audit = AuditLog.builder()
 				.action(action)
 				.performedBy(performedBy)

@@ -13,7 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "facory" ,
+@Table(name = "factory" ,
 indexes = {
 		@Index(name = "idx_fact_code", columnList = "fact_code"),
 }
@@ -38,6 +38,6 @@ public class Factory {
 	private String address;
 	
 	@Column(nullable = false)
-	private Long manufacturer_id;
+	private Long manufacturerPartyId;
 
 }

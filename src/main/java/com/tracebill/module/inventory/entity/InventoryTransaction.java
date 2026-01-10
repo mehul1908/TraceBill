@@ -30,7 +30,7 @@ public class InventoryTransaction {
 	private Long performedOn;
 	
 	@Column(nullable = false)
-	private Boolean add;
+	private Boolean increment;
 	
 	@Column(nullable = false)
 	private Long productId;
@@ -42,5 +42,5 @@ public class InventoryTransaction {
 	private BigInteger qty;
 	
 	@Builder.Default
-	private LocalDateTime date = LocalDateTime.now();
+	private LocalDateTime txnDate = LocalDateTime.now();
 }

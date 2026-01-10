@@ -58,7 +58,7 @@ public class User {
     @JsonIgnore
     private String walletAddress;
     
-    @Column(nullable = false , unique = true)
+    @Column(unique = true)
     private Long partyId;
 
     

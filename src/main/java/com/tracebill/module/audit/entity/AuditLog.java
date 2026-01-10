@@ -37,9 +37,8 @@ public class AuditLog {
     @Column(nullable=false)
     private AuditAction action;
 
-    @ManyToOne(fetch =FetchType.LAZY)
-    @JoinColumn(nullable=false)
-    private User performedBy;
+    @Column(nullable=false)
+    private Long performedBy;
 
     @Builder.Default
     private LocalDateTime performedAt = LocalDateTime.now();
