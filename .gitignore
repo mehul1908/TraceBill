@@ -1,33 +1,103 @@
-HELP.md
+##################################
+# Maven / Java
+##################################
 target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+*.class
+*.log
+hs_err_pid*
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+##################################
+# Spring Boot
+##################################
+/build/
+logs/
+*.log
 
-### IntelliJ IDEA ###
-.idea
-*.iws
+# Environment-specific configs
+.env
+application-local.yml
+application-local.properties
+application-dev.yml
+application-dev.properties
+application-prod.yml
+application-prod.properties
+
+##################################
+# IntelliJ IDEA
+##################################
+.idea/
 *.iml
+*.iws
 *.ipr
+out/
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+##################################
+# Eclipse / STS
+##################################
+.project
+.classpath
+.settings/
+.factorypath
 
-### VS Code ###
+##################################
+# VS Code
+##################################
 .vscode/
+
+##################################
+# OS Files
+##################################
+.DS_Store
+Thumbs.db
+
+##################################
+# Docker
+##################################
+docker-data/
+docker-volume/
+*.pid
+
+##################################
+# Blockchain / Solidity
+##################################
+# Node / Hardhat / Truffle
+node_modules/
+npm-debug.log*
+yarn.lock
+package-lock.json
+
+# Hardhat / Truffle build output
+artifacts/
+cache/
+build/
+
+# Solidity coverage
+coverage/
+
+##################################
+# Web3 / Keys / Wallets
+##################################
+*.keystore
+*.pem
+wallet.json
+private-key.txt
+secrets.json
+
+##################################
+# IPFS / Off-chain storage
+##################################
+ipfs-data/
+uploads/
+temp/
+
+##################################
+# Testing & Coverage
+##################################
+*.exec
+coverage-reports/
+
+##################################
+# Misc
+##################################
+*.swp
+*.bak
