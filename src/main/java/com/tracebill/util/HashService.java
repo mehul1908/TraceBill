@@ -17,8 +17,8 @@ public class HashService {
         return sha256(canonical);
     }
 
-    public String generateBatchHash(String batchNo, String productHash, String factoryCode, LocalDate manufactureDate) {
-        String canonical = String.join("|", batchNo, productHash, factoryCode, manufactureDate.toString());
+    public String generateBatchHash(String batchNo, String productHash, Long factoryId, LocalDate manufactureDate , Long version) {
+        String canonical = String.join("|", batchNo, productHash, factoryId.toString(), manufactureDate.toString(), version.toString());
         return sha256(canonical);
     }
 

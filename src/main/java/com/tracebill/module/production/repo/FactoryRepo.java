@@ -9,4 +9,6 @@ import com.tracebill.module.production.entity.Factory;
 @Repository
 public interface FactoryRepo extends JpaRepository<Factory, Long> {
 
+	boolean existsByFactoryIdAndManufacturerPartyId(Long factoryId, Long partyId);
+
 }

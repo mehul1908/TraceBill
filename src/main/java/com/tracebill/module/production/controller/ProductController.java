@@ -3,6 +3,7 @@ package com.tracebill.module.production.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,7 @@ public class ProductController {
 	@Autowired
 	private ProductService prodService;
 	
+	@PostMapping("/")
 	public ResponseEntity<ApiResponse> createProduct(@RequestBody @Valid ProductRegisterModel model){
 		Long productId = prodService.createProduct(model);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, productId, "Product Created"));

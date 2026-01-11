@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GlobalExceptionHandler {
 	// ------------------- 404 NOT FOUND -------------------
-    @ExceptionHandler({ UsernameNotFoundException.class, UserNotFoundException.class  /*, ProductNotFoundException.class , FactoryNotFoundException.class*/})
+    @ExceptionHandler({ UsernameNotFoundException.class, UserNotFoundException.class  , ResourceNotFoundException.class /*, ProductNotFoundException.class , FactoryNotFoundException.class*/})
     public ResponseEntity<ApiResponse> handleNotFound(RuntimeException ex, HttpServletRequest request) {
         log.warn("Resource not found: {}", ex.getMessage());
         return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND, request.getRequestURI());

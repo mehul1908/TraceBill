@@ -13,6 +13,7 @@ import com.tracebill.module.production.entity.Product;
 import com.tracebill.module.production.repo.ProductRepo;
 import com.tracebill.module.user.enums.UserRole;
 import com.tracebill.util.HashService;
+import com.tracebill.util.SequenceGeneratorService;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -67,6 +68,11 @@ public class ProductServiceImpl implements ProductService{
 		auditService.create(AuditAction.CREATED, "Product Created : " + prodCode);
 		
 		return saved.getProductId();
+	}
+
+	@Override
+	public boolean existById(Long productId) {
+		return productRepo.existsById(productId);
 	}
 
 }

@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,7 +37,7 @@ public class Batch {
 	private String batchNo;
 	
 	@Column(nullable  = false)
-	private LocalDate manufacturedTime;
+	private LocalDate manufacturedDate;
 	
 	@Column(nullable = false)
 	private LocalDate expiryDate;
@@ -49,6 +50,12 @@ public class Batch {
 	
 	@Column(nullable=false)
 	private BigInteger manufacturedQty;
+	
+	@Version
+	private Long version;
+	
+	
+	
 	
 	
 }

@@ -8,4 +8,6 @@ public interface ProductService {
 
 	Long createProduct(ProductRegisterModel model);
 
+	boolean existById(Long productId);
+
 }

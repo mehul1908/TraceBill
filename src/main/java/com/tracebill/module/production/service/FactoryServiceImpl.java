@@ -14,6 +14,7 @@ import com.tracebill.module.party.service.PartyService;
 import com.tracebill.module.production.dto.FactoryRegisterModel;
 import com.tracebill.module.production.entity.Factory;
 import com.tracebill.module.production.repo.FactoryRepo;
+import com.tracebill.util.SequenceGeneratorService;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -66,6 +67,16 @@ public class FactoryServiceImpl implements FactoryService{
 	    log.info("Factory {} created successfully", factoryCode);
 		
 	    return factory.getFactoryId();
+	}
+
+	@Override
+	public boolean existById(Long factoryId) {
+		return factoryRepo.existsById(factoryId);
+	}
+
+	@Override
+	public boolean isFactoryOwnedBy(Long factoryId, Long partyId) {
+		return factoryRepo.existsByFactoryIdAndManufacturerPartyId(factoryId , partyId);
 	}
 
 }

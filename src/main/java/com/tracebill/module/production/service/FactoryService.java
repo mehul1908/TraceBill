@@ -8,4 +8,8 @@ public interface FactoryService {
 
 	Long createFactory(@Valid FactoryRegisterModel model);
 
+	boolean existById(Long factoryId);
+
+	boolean isFactoryOwnedBy(Long factoryId, Long partyId);
+
 }
