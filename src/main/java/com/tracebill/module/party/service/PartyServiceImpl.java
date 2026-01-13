@@ -8,6 +8,7 @@ import com.tracebill.module.party.entity.Party;
 import com.tracebill.module.party.enums.PartyType;
 import com.tracebill.module.party.exception.PartyNotFoundException;
 import com.tracebill.module.party.repo.PartyRepo;
+import com.tracebill.util.SequenceGeneratorService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,8 @@ public class PartyServiceImpl implements PartyService {
 
 
 	private final PartyRepo partyRepo;
+	
+	private final SequenceGeneratorService sequenceGenerator;
 
 	@Override
 	public Long createParty(String email, Long parentPartyId, PartyType partyType) {
@@ -31,10 +34,14 @@ public class PartyServiceImpl implements PartyService {
 		if(parentPartyId!= null && !this.existById(parentPartyId)) {
 			throw new IllegalArgumentException("Parent Id does not exist.");
 		}
+		
+		String partyCode = sequenceGenerator.getPartyCode(partyType);
+		
 		Party party = Party.builder()
 				.email(email)
 				.parentPartyId(parentPartyId)
 				.type(partyType)
+				.partyCode(partyCode)
 				.build();
 		partyRepo.save(party);
 		return party.getPartyId();

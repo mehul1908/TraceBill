@@ -12,4 +12,6 @@ public interface ProductInvRepo extends JpaRepository<ProductInventory, Long>{
 
 	Optional<ProductInventory> findByProductInvIdAndOwnerId(Long productId, Long partyId);
 
+	Optional<ProductInventory> findByProductIdAndOwnerId(Long productId, Long partyId);
+
 }

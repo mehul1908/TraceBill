@@ -35,4 +35,10 @@ public class BatchInventory {
 	
 	//Party Id of owner
 	private Long ownerId;
+
+	public void subtractStock(BigInteger remainingQty) {
+		
+		 this.qty = this.qty.subtract(remainingQty);
+		
+	}
 }

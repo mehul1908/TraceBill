@@ -55,6 +55,9 @@ public class Party {
 	@Builder.Default
 	private boolean active = true;
 	
+	@Column(nullable = false, unique = true, updatable = false, length = 10)
+	private String partyCode;
+
 	@Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PartyType type;

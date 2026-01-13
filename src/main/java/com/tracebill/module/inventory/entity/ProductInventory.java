@@ -35,4 +35,10 @@ public class ProductInventory {
 	
 	//Party Id of owner
 	private Long ownerId;
+
+	public void subtractStock(BigInteger qty) {
+		
+		this.qty = this.qty.subtract(qty);
+		
+	}
 }

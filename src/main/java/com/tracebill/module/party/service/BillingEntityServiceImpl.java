@@ -3,6 +3,7 @@ package com.tracebill.module.party.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tracebill.exception.ResourceNotFoundException;
 import com.tracebill.module.party.dto.BillingEntityRegisterModel;
 import com.tracebill.module.party.entity.BillingEntity;
 import com.tracebill.module.party.repo.BillingEntityRepo;
@@ -34,6 +35,12 @@ public class BillingEntityServiceImpl implements BillingEntityService{
 				.build();
 		
 		billingEntityRepo.save(billingEntity);
+	}
+
+	@Override
+	public BillingEntity getBillingEntityByPartyId(Long partyId) {
+		return billingEntityRepo.findByPartyId(partyId)
+				.orElseThrow(() -> new ResourceNotFoundException("Billing Enity with party not found : " + partyId));
 	}
 	
 	
