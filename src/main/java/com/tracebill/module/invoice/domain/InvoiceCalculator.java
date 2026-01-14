@@ -50,10 +50,11 @@ public class InvoiceCalculator {
 
             BigDecimal qty = new BigDecimal(item.getQty());
             BigDecimal gross = item.getRate().multiply(qty);
-            BigDecimal net = gross.subtract(item.getDisc());
+            BigDecimal discAmt = item.getDisc().multiply(gross).divide(BigDecimal.valueOf(100));
+            BigDecimal net = gross.subtract(discAmt);
 
             BigDecimal taxRate = item.getTaxRate(); // derived from product
-            BigDecimal itemTax = net.multiply(taxRate);
+            BigDecimal itemTax = net.multiply(taxRate).divide(BigDecimal.valueOf(100));
 
             amt = amt.add(net);
             tax = tax.add(itemTax);

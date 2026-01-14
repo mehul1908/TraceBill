@@ -51,6 +51,7 @@ public class InventoryTxnServiceImpl implements InventoryTxnService {
             Long productId,
             BigInteger qty
     ) {
+    	Long partyId = authenticatedUser.getAuthenticatedParty();
 
         InventoryTransaction txn = InventoryTransaction.builder()
                 .refType("PRODUCTION")
@@ -58,6 +59,7 @@ public class InventoryTxnServiceImpl implements InventoryTxnService {
                 .productId(productId)
                 .batchId(batchId)
                 .qty(qty)
+                .performedOn(partyId)
                 .build();
 
         txnRepo.save(txn);

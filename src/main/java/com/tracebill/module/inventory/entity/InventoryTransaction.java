@@ -30,9 +30,6 @@ public class InventoryTransaction {
 	private Long performedOn;
 	
 	@Column(nullable = false)
-	private Boolean increment;
-	
-	@Column(nullable = false)
 	private Long productId;
 	
 	@Column(nullable = false)

@@ -15,6 +15,8 @@ import com.tracebill.module.invoice.domain.InvoiceCalculator;
 import com.tracebill.module.invoice.dto.InvoiceItemRegisterModel;
 import com.tracebill.module.invoice.dto.InvoiceRegisterModel;
 import com.tracebill.module.invoice.entity.Invoice;
+import com.tracebill.module.invoice.entity.InvoiceItem;
+import com.tracebill.module.invoice.repo.InvoiceItemRepo;
 import com.tracebill.module.invoice.repo.InvoiceRepo;
 import com.tracebill.module.party.entity.BillingEntity;
 import com.tracebill.module.party.entity.Party;
@@ -43,7 +45,7 @@ public class InvoiceApplicationService {
     private final ProductService productService;
     private final InvoiceCalculator invoiceCalculator;
     private final InventoryApplicationService inventoryApplicationService;
-    
+    private final InvoiceItemRepo invoiceItemRepo;
 
     public String generateInvoice(InvoiceRegisterModel model) {
 
@@ -97,15 +99,21 @@ public class InvoiceApplicationService {
 
         invoiceCalculator.calculateTotals(aggregate);
 
-        Invoice saved = invoiceRepo.save(aggregate.getInvoice());
+        Invoice savedInvoice = invoiceRepo.save(aggregate.getInvoice());
+
+        for (InvoiceItem item : aggregate.getItems()) {
+            item.setInvoice(savedInvoice); // owning side
+            invoiceItemRepo.save(item);
+        }
+
 
         // inventory mutation AFTER invoice persistence
         inventoryApplicationService.consumeForInvoice(
-                saved.getInvoiceNo(),
+                savedInvoice.getInvoiceNo(),
                 model.getItems()
         );
 
-        return saved.getInvoiceNo();
+        return savedInvoice.getInvoiceNo();
     }
 
 }
