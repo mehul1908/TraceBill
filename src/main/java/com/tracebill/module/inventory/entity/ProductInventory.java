@@ -41,4 +41,8 @@ public class ProductInventory {
 		this.qty = this.qty.subtract(qty);
 		
 	}
+
+	public void addStock(BigInteger qty) {
+		this.qty = this.qty.add(qty);
+	}
 }

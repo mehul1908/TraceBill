@@ -41,6 +41,10 @@ public class InventoryTransaction {
 	@Column(nullable = false)
 	private BigInteger qty;
 	
+	private String refType;
+	
+	private String refNo;
+	
 	@Builder.Default
 	private LocalDateTime txnDate = LocalDateTime.now();
 }

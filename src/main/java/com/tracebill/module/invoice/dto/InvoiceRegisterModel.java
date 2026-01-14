@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class InvoiceRegisterModel {
 
-	@NotNull(message = "From Id can not be null")
-	private Long fromPartyId;
+	@NotNull(message = "To Party Id can not be null")
+	private Long toPartyId;
 	
 	private LocalDate date;
 	

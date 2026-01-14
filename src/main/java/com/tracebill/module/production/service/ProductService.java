@@ -1,6 +1,7 @@
 package com.tracebill.module.production.service;
 
 import com.tracebill.module.production.dto.ProductRegisterModel;
+import com.tracebill.module.production.entity.Product;
 
 import jakarta.validation.Valid;
 
@@ -9,5 +10,7 @@ public interface ProductService {
 	Long createProduct(ProductRegisterModel model);
 
 	boolean existById(Long productId);
+
+	Product getProductById(Long productId);
 
 }

@@ -48,10 +48,10 @@ public class Product {
 	private List<BigDecimal> defaultRate = new ArrayList<>(3);
 	
 	@Column(nullable=false)
-	private BigInteger gstRate;
+	private BigDecimal gstRate;
 	
 	@Column(nullable=false)
-	private BigInteger cessRate;
+	private BigDecimal cessRate;
 	
 	private String productHash;
 	

@@ -1,6 +1,7 @@
 package com.tracebill.module.inventory.repo;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,6 +26,8 @@ public interface BatchInvRepo extends JpaRepository<BatchInventory, Long>{
 		        @Param("productId") Long productId,
 		        @Param("ownerId") Long ownerId
 		);
+
+	Optional<BatchInventory> findByBatchId(Long batchId);
 
 	
 }

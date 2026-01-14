@@ -15,86 +15,103 @@ import com.tracebill.module.inventory.exception.InsufficientStockException;
 import com.tracebill.module.inventory.repo.BatchInvRepo;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class BatchInvServiceImpl implements BatchInvService {
 
-	@Autowired
-	private AuthenticatedUserProvider authenticatedUser;
-	
-	@Autowired
-	private BatchInvRepo batchInvRepo;
-	
-	@Autowired
-	private ProductInvService prodInvService;
-	
-	@Override
-	@Transactional
-	public Long createBatchInventory(Long batchId, Long prodInvId, BigInteger manufacturedQty) {
-		
-		Long partyOwnerId = authenticatedUser.getAuthenticatedParty();
-		
-		BatchInventory batchInv = BatchInventory.builder()
-				.batchId(batchId)
-				.qty(manufacturedQty)
-				.ownerId(partyOwnerId)
-				.build();
-		
-		BatchInventory saved = batchInvRepo.save(batchInv);
-		
-		prodInvService.addQuantity(prodInvId , manufacturedQty);
-		
-		return saved.getBatchInvId();
-		
-		
-	}
+    private final AuthenticatedUserProvider authenticatedUser;
+    private final BatchInvRepo batchInvRepo;
+    private final ProductInvService productInvService;
 
-	@Override
-	@Transactional
-	public List<BatchQuantityDTO> getBatchAndQuantityByProductAndQuantity(Long productId, BigInteger qty) {
-		
-		List<BatchQuantityDTO> dtos = new ArrayList<>();
-		
-		Long ownerId = authenticatedUser.getAuthenticatedParty();
-		
-		ProductInventory productInv = prodInvService.getProdInvByProdAndParty(productId, ownerId);
-		
-		if(productInv.getQty().compareTo(qty) < 0) {
-			throw new InsufficientStockException("Insufficient Stock for product : " + productId);
-		}
-		
-		List<BatchInventory> batchInvs = batchInvRepo.findAvailableBatchesFIFO(productId, ownerId);
-		
-		if (batchInvs.isEmpty()) {
-	        throw new InsufficientStockException("No stock available for product: " + productId);
-	    }
-		
-		BigInteger remainingQty = qty;
-		
-		for(BatchInventory batchInv : batchInvs) {
-			
-			BigInteger stock = batchInv.getQty();
-			if(stock.compareTo(remainingQty) >= 0) {
-				batchInv.subtractStock(remainingQty);
-				batchInvRepo.save(batchInv);
-				dtos.add(new BatchQuantityDTO(batchInv.getBatchId(), remainingQty));
-				break;
-			}else {
-				batchInv.subtractStock(stock);
-				remainingQty = remainingQty.subtract(stock);
-				batchInvRepo.save(batchInv);
-				dtos.add(new BatchQuantityDTO(batchInv.getBatchId(), stock));
-			}
-			
-			if(remainingQty.compareTo(BigInteger.ZERO) == 0) {
-				break;
-			}
-		}
-		
-		productInv.subtractStock(qty);
-		prodInvService.save(productInv);
-		
-		return dtos;
-	}
+    @Override
+    @Transactional
+    public Long createBatchInventory(
+            Long batchId,
+            Long prodInvId,
+            BigInteger manufacturedQty
+    ) {
 
+        Long ownerId = authenticatedUser.getAuthenticatedParty();
+
+        BatchInventory batchInv = BatchInventory.builder()
+                .batchId(batchId)
+                .qty(manufacturedQty)
+                .ownerId(ownerId)
+                .build();
+
+        BatchInventory saved = batchInvRepo.save(batchInv);
+
+        productInvService.addQuantity(prodInvId, manufacturedQty);
+
+        return saved.getBatchInvId();
+    }
+
+    @Override
+    public List<BatchQuantityDTO> allocateFIFO(
+            Long productId,
+            BigInteger requiredQty
+    ) {
+
+        Long ownerId = authenticatedUser.getAuthenticatedParty();
+
+        ProductInventory productInv =
+                productInvService.getProdInvByProdAndParty(productId, ownerId);
+
+        if (productInv.getQty().compareTo(requiredQty) < 0) {
+            throw new InsufficientStockException(
+                    "Insufficient stock for product: " + productId
+            );
+        }
+
+        List<BatchInventory> batches =
+                batchInvRepo.findAvailableBatchesFIFO(productId, ownerId);
+
+        if (batches.isEmpty()) {
+            throw new InsufficientStockException(
+                    "No batch stock available for product: " + productId
+            );
+        }
+
+        BigInteger remaining = requiredQty;
+        List<BatchQuantityDTO> result = new ArrayList<>();
+
+        for (BatchInventory batch : batches) {
+
+            if (remaining.signum() <= 0) break;
+
+            BigInteger takeQty = batch.getQty().min(remaining);
+
+            result.add(new BatchQuantityDTO(batch.getBatchId(), takeQty));
+            remaining = remaining.subtract(takeQty);
+        }
+
+        if (remaining.signum() > 0) {
+            throw new InsufficientStockException("FIFO allocation failed");
+        }
+
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public void consumeBatches(
+            List<BatchQuantityDTO> allocations
+    ) {
+
+        for (BatchQuantityDTO dto : allocations) {
+
+            BatchInventory batch =
+                    batchInvRepo.findByBatchId(dto.getBatchId())
+                            .orElseThrow(() ->
+                                    new IllegalStateException(
+                                            "Batch not found: " + dto.getBatchId()
+                                    )
+                            );
+
+            batch.subtractStock(dto.getQuantity());
+            batchInvRepo.save(batch);
+        }
+    }
 }

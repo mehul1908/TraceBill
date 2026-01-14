@@ -14,6 +14,7 @@ import com.tracebill.module.batch.dto.BatchRegisterModel;
 import com.tracebill.module.batch.entity.Batch;
 import com.tracebill.module.batch.repo.BatchRepo;
 import com.tracebill.module.inventory.service.BatchInvService;
+import com.tracebill.module.inventory.service.InventoryTxnService;
 import com.tracebill.module.inventory.service.ProductInvService;
 import com.tracebill.module.production.service.FactoryService;
 import com.tracebill.module.production.service.ProductService;
@@ -47,6 +48,9 @@ public class BatchServiceImpl implements BatchService {
 	
 	@Autowired
 	private AuthenticatedUserProvider authenticatedUser;
+	
+	@Autowired
+	private InventoryTxnService inventoryTxnService;
 	
 	@Transactional
 	@Override
@@ -83,6 +87,7 @@ public class BatchServiceImpl implements BatchService {
         
         Long batchInvId = batchInvService.createBatchInventory(saved.getBatchId() , prodInvId , model.getManufacturedQty());
         
+        inventoryTxnService.recordProduction(saved.getBatchId(), model.getProductId(), saved.getManufacturedQty());
         return saved.getBatchNo();
 	}
 

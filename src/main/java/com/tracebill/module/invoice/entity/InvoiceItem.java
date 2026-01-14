@@ -48,6 +48,9 @@ public class InvoiceItem {
 	@Column(nullable = false)
 	private BigDecimal rate;
 	
+	@Column(nullable = false)
+	private BigDecimal taxRate;
+	
 	@Builder.Default
 	private BigDecimal disc = new BigDecimal(0);
 	

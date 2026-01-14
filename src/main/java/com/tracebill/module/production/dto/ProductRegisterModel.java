@@ -32,9 +32,9 @@ public class ProductRegisterModel {
 
     @NotNull(message = "GST rate cannot be null")
     @Min(value = 0, message = "GST rate cannot be negative")
-    private BigInteger gstRate;
+    private BigDecimal gstRate;
 
     @NotNull(message = "Cess rate cannot be null")
     @Min(value = 0, message = "Cess rate cannot be negative")
-    private BigInteger cessRate;
+    private BigDecimal cessRate;
 }

@@ -7,9 +7,19 @@ import com.tracebill.module.inventory.dto.BatchQuantityDTO;
 
 public interface BatchInvService {
 
+    Long createBatchInventory(
+            Long batchId,
+            Long prodInvId,
+            BigInteger manufacturedQty
+    );
 
-	Long createBatchInventory(Long batchId, Long prodInvId, BigInteger manufacturedQty);
+    List<BatchQuantityDTO> allocateFIFO(
+            Long productId,
+            BigInteger requiredQty
+    );
 
-	List<BatchQuantityDTO> getBatchAndQuantityByProductAndQuantity(Long productId, BigInteger qty);
-
+    void consumeBatches(
+            List<BatchQuantityDTO> allocations
+    );
 }
+

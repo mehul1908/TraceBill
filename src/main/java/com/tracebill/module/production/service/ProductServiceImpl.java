@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import com.tracebill.exception.ResourceNotFoundException;
 import com.tracebill.exception.UnauthorizedUserException;
 import com.tracebill.module.audit.enums.AuditAction;
 import com.tracebill.module.audit.service.AuditLogService;
@@ -73,6 +74,12 @@ public class ProductServiceImpl implements ProductService{
 	@Override
 	public boolean existById(Long productId) {
 		return productRepo.existsById(productId);
+	}
+
+	@Override
+	public Product getProductById(Long productId) {
+		return productRepo.findById(productId)
+				.orElseThrow(() -> new ResourceNotFoundException("Product not found with id : " + productId));
 	}
 
 }
