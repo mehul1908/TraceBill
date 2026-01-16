@@ -11,6 +11,7 @@ import com.tracebill.module.invoice.sequence.InvoiceSequence;
 
 import jakarta.persistence.LockModeType;
 
+@Repository
 public interface InvoiceSequenceRepo extends JpaRepository<InvoiceSequence, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)

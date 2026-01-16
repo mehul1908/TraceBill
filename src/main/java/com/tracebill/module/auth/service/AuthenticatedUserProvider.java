@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import com.tracebill.exception.UnauthorizedUserException;
 import com.tracebill.module.auth.entity.SecurityUser;
-import com.tracebill.module.user.entity.User;
 import com.tracebill.module.user.enums.UserRole;
 
 @Component

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tracebill.module.party.entity.Party;
-import com.tracebill.module.party.enums.PartyType;
 import com.tracebill.module.party.service.PartyService;
 import com.tracebill.module.user.dto.CreateUserModel;
 import com.tracebill.module.user.entity.User;

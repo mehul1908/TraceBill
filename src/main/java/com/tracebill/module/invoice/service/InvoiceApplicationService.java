@@ -9,7 +9,6 @@ import com.tracebill.module.auth.service.AuthenticatedUserProvider;
 import com.tracebill.module.inventory.dto.BatchQuantityDTO;
 import com.tracebill.module.inventory.service.BatchInvService;
 import com.tracebill.module.inventory.service.InventoryApplicationService;
-import com.tracebill.module.inventory.service.ProductInvService;
 import com.tracebill.module.invoice.domain.InvoiceAggregate;
 import com.tracebill.module.invoice.domain.InvoiceCalculator;
 import com.tracebill.module.invoice.dto.InvoiceItemRegisterModel;
@@ -41,7 +40,6 @@ public class InvoiceApplicationService {
     private final AuthenticatedUserProvider authUser;
     private final SequenceGeneratorService sequenceGenerator;
     private final BatchInvService batchInvService;
-    private final ProductInvService productInvService;
     private final ProductService productService;
     private final InvoiceCalculator invoiceCalculator;
     private final InventoryApplicationService inventoryApplicationService;

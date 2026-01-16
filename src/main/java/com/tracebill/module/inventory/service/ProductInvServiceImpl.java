@@ -1,15 +1,12 @@
 package com.tracebill.module.inventory.service;
 
 import java.math.BigInteger;
-import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tracebill.exception.ResourceNotFoundException;
 import com.tracebill.module.auth.service.AuthenticatedUserProvider;
-import com.tracebill.module.inventory.dto.BatchQuantityDTO;
 import com.tracebill.module.inventory.entity.ProductInventory;
 import com.tracebill.module.inventory.repo.ProductInvRepo;
 

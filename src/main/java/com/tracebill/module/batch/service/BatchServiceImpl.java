@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.tracebill.exception.ResourceNotFoundException;
 import com.tracebill.exception.UnauthorizedUserException;
-import com.tracebill.module.audit.service.AuditLogService;
 import com.tracebill.module.auth.service.AuthenticatedUserProvider;
 import com.tracebill.module.batch.dto.BatchRegisterModel;
 import com.tracebill.module.batch.entity.Batch;
@@ -33,9 +32,6 @@ public class BatchServiceImpl implements BatchService {
 	
 	@Autowired
 	private ProductService productService;
-	
-	@Autowired
-	private AuditLogService auditService;
 	
 	@Autowired
 	private SequenceGeneratorService sequenceGenerator;
@@ -85,7 +81,7 @@ public class BatchServiceImpl implements BatchService {
                 
         Long prodInvId = prodInvService.getProdInvByProdAndPartyOrCreate(model.getProductId() , partyId);
         
-        Long batchInvId = batchInvService.createBatchInventory(saved.getBatchId() , prodInvId , model.getManufacturedQty());
+        batchInvService.createBatchInventory(saved.getBatchId() , prodInvId , model.getManufacturedQty());
         
         inventoryTxnService.recordProduction(saved.getBatchId(), model.getProductId(), saved.getManufacturedQty());
         return saved.getBatchNo();

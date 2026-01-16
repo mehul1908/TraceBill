@@ -16,8 +16,6 @@ import com.tracebill.module.user.enums.UserRole;
 import com.tracebill.util.HashService;
 import com.tracebill.util.SequenceGeneratorService;
 
-import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
