@@ -66,11 +66,14 @@ public class UserServiceImpl implements UserService{
 		}
 		
 		Long partyId = null;
-		if(model.getRole() != UserRole.ROLE_ADMIN && model.getRole() != UserRole.ROLE_TRANSPORTER) {
+		if(model.getRole() != UserRole.ROLE_ADMIN) {
 			Party party = partyService.getPartyByEmail(model.getEmail());
 			partyId = party.getPartyId();
 			if(!model.getEmail().equals(party.getEmail())) {
 				throw new IllegalArgumentException("Email Id does not match with party");
+			}
+			if(!model.getRole().toString().contains(party.getType().toString())) {
+				throw new IllegalArgumentException("Role does not match with party");
 			}
 		}
 		

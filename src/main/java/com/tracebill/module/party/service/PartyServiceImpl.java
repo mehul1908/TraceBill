@@ -26,7 +26,7 @@ public class PartyServiceImpl implements PartyService {
 	@Override
 	public Long createParty(String email, Long parentPartyId, PartyType partyType) {
 		
-		if(partyType != PartyType.MANUFACTURER && parentPartyId == null) {
+		if((partyType != PartyType.MANUFACTURER && partyType !=PartyType.TRANSPORTER)&& parentPartyId == null) {
 			throw new IllegalArgumentException("Parent Id can not be null");
 
 		}
