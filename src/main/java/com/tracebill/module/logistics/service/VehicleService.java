@@ -7,4 +7,6 @@ public interface VehicleService {
 
 	String createVehicle(VehicleRegisterModel model);
 
+	boolean existById(Long vehicleId);
+
 }

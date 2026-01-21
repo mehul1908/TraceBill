@@ -4,5 +4,6 @@ public enum InvoiceStatus {
 	SAVED,
 	VEHICLE_ALLOTED,
 	RECEIVED,
-	CANCELLED
+	CANCELLED,
+	DISPATCHED
 }

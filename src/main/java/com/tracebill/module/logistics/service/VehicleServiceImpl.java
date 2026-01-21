@@ -22,7 +22,6 @@ public class VehicleServiceImpl implements VehicleService {
 	@PreAuthorize("hasRole('TRANSPORTER')")
 	public String createVehicle(VehicleRegisterModel model) {
 		Long transporterPartyId = authenticatedUser.getAuthenticatedParty();
-		System.out.println(transporterPartyId);
 		Vehicle vehicle = Vehicle.builder()
 				.vehicleNo(model.getVehicleNo())
 				.tranporterId(transporterPartyId)
@@ -30,6 +29,11 @@ public class VehicleServiceImpl implements VehicleService {
 				.build();
 		Vehicle savedVehicle = vehicleRepo.save(vehicle);
 		return savedVehicle.getVehicleNo();
+	}
+
+	@Override
+	public boolean existById(Long vehicleId) {
+		return vehicleRepo.existsById(vehicleId);
 	}
 
 }
