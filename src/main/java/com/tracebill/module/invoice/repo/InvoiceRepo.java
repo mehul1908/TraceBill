@@ -1,5 +1,6 @@
 package com.tracebill.module.invoice.repo;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,6 @@ public interface InvoiceRepo extends JpaRepository<Invoice, Long> {
 			    where i.invoiceId = :invoiceId
 			""")
 	Optional<Invoice> findByIdWithItems(Long invoiceId);
+
+	List<Invoice> findByShipmentId(Long shipmentId);
 }

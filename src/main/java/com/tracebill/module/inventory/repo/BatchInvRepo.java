@@ -27,7 +27,9 @@ public interface BatchInvRepo extends JpaRepository<BatchInventory, Long>{
 		        @Param("ownerId") Long ownerId
 		);
 
-	Optional<BatchInventory> findByBatchId(Long batchId);
+	List<BatchInventory> findByBatchId(Long batchId);
+
+	Optional<BatchInventory> findByBatchIdAndOwnerId(Long batchId, Long owner);
 
 	
 }

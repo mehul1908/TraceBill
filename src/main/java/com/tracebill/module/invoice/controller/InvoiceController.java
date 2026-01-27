@@ -3,6 +3,7 @@ package com.tracebill.module.invoice.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,14 @@ public class InvoiceController {
 		String invoiceNo = invoiceService.generateInvoice(model);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, invoiceNo, "Invoice Created successfully"));
+		
+	}
+	
+	@PostMapping("/{invoiceId}/cancel")
+	public ResponseEntity<ApiResponse> cancelInvoice(@PathVariable Long invoiceId){
+		
+		invoiceService.cancelInvoice(invoiceId);
+		return ResponseEntity.ok(new ApiResponse(true, invoiceId, "Invoice is cancelled successfully"));
 		
 	}
 	

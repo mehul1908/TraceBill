@@ -26,7 +26,6 @@ public class AuditLogServiceImpl implements AuditLogService{
 	@Transactional
 	public void create(AuditAction action, String metadata) {
 		Long performedBy = authenticatedUser.getAuthenticatedParty();
-		System.out.println("performed by "  + performedBy);
 		AuditLog audit = AuditLog.builder()
 				.action(action)
 				.performedBy(performedBy)

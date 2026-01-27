@@ -10,6 +10,7 @@ import com.tracebill.module.auth.service.AuthenticatedUserProvider;
 import com.tracebill.module.inventory.entity.ProductInventory;
 import com.tracebill.module.inventory.repo.ProductInvRepo;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +20,12 @@ public class ProductInvServiceImpl implements ProductInvService {
 
     private final AuthenticatedUserProvider authenticatedUser;
     private final ProductInvRepo productInvRepo;
+    
+    @PostConstruct
+    public void init() {
+        System.out.println("LOADED: ProductInvServiceImpl");
+    }
+
 
     @Override
     public ProductInventory getProdInvByProdAndParty(
@@ -70,19 +77,21 @@ public class ProductInvServiceImpl implements ProductInvService {
     
     @Override
 	public Long getProdInvByProdAndPartyOrCreate(Long productId , Long partyId) {
+    		System.out.println("In get product inv ");
 		Optional<ProductInventory> prodInvOp = productInvRepo.findByProductIdAndOwnerId(productId , partyId);
 		if(prodInvOp.isPresent())
 			return prodInvOp.get().getProductInvId();
 		
-		Long ownerPartyId = authenticatedUser.getAuthenticatedParty();
 		
 		ProductInventory prodInv = ProductInventory.builder()
 				.productId(productId)
 				.qty(BigInteger.valueOf(0))
-				.ownerId(ownerPartyId)
+				.ownerId(partyId)
 				.build();
 		
 		ProductInventory saved = productInvRepo.save(prodInv);
+		System.out.println(saved);
+		
 		return saved.getProductInvId();
 		
 	}

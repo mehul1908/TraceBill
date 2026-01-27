@@ -35,6 +35,9 @@ public class ShipmentItem {
 	@JoinColumn(name = "shipment_id")
 	private Shipment shipment;
 	
+	@Column(nullable = false)
+	private Long productId;
+	
 	@Column
 	private Long invoiceItemId;
 	

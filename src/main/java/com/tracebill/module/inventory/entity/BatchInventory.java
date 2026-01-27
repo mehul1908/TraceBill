@@ -41,4 +41,8 @@ public class BatchInventory {
 		 this.qty = this.qty.subtract(remainingQty);
 		
 	}
+
+	public void addStock(BigInteger qty) {
+		this.qty = this.qty.add(qty);
+	}
 }

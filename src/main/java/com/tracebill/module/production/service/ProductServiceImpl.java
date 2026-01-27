@@ -63,9 +63,7 @@ public class ProductServiceImpl implements ProductService{
 				.build();
 		
 		Product saved =productRepo.save(product);
-		
-		auditService.create(AuditAction.CREATED, "Product Created : " + prodCode);
-		
+				
 		return saved.getProductId();
 	}
 

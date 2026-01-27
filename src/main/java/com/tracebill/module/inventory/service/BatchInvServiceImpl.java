@@ -3,15 +3,18 @@ package com.tracebill.module.inventory.service;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.tracebill.module.auth.service.AuthenticatedUserProvider;
+import com.tracebill.module.batch.entity.Batch;
 import com.tracebill.module.inventory.dto.BatchQuantityDTO;
 import com.tracebill.module.inventory.entity.BatchInventory;
 import com.tracebill.module.inventory.entity.ProductInventory;
 import com.tracebill.module.inventory.exception.InsufficientStockException;
 import com.tracebill.module.inventory.repo.BatchInvRepo;
+import com.tracebill.module.logistics.entity.ShipmentItem;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +44,8 @@ public class BatchInvServiceImpl implements BatchInvService {
                 .build();
 
         BatchInventory saved = batchInvRepo.save(batchInv);
-
-        productInvService.addQuantity(prodInvId, manufacturedQty);
+        if(prodInvId!=null)
+        	productInvService.addQuantity(prodInvId, manufacturedQty);
 
         return saved.getBatchInvId();
     }
@@ -99,10 +102,11 @@ public class BatchInvServiceImpl implements BatchInvService {
             List<BatchQuantityDTO> allocations
     ) {
 
+    		Long partyId = authenticatedUser.getAuthenticatedParty();
         for (BatchQuantityDTO dto : allocations) {
 
             BatchInventory batch =
-                    batchInvRepo.findByBatchId(dto.getBatchId())
+                    batchInvRepo.findByBatchIdAndOwnerId(dto.getBatchId() , partyId)
                             .orElseThrow(() ->
                                     new IllegalStateException(
                                             "Batch not found: " + dto.getBatchId()
@@ -113,4 +117,22 @@ public class BatchInvServiceImpl implements BatchInvService {
             batchInvRepo.save(batch);
         }
     }
+
+	@Override
+	@Transactional
+	public void addBatches(Long batchId , BigInteger qty) {
+		Long owner = authenticatedUser.getAuthenticatedParty();
+		BatchInventory batchInv = this.getBatchInvByBatchIdAndOwnerOrCreate(batchId , owner);
+		batchInv.addStock(qty);
+		batchInvRepo.save(batchInv);
+	}
+
+	@Transactional
+	private BatchInventory getBatchInvByBatchIdAndOwnerOrCreate(Long batchId, Long owner) {
+		Optional<BatchInventory> batchInvOp = batchInvRepo.findByBatchIdAndOwnerId(batchId , owner);
+		if(batchInvOp.isPresent())
+				return batchInvOp.get();
+		Long batchInvId = this.createBatchInventory(batchId, null, BigInteger.ZERO);
+		return batchInvRepo.findById(batchInvId).get();
+	}
 }

@@ -12,7 +12,6 @@ import com.tracebill.module.user.enums.UserRole;
 public class AuthenticatedUserProvider {
 
     public Long getAuthenticatedParty() {
-    	System.out.println("In get Authenticated User");
     	Authentication auth =
                 SecurityContextHolder.getContext().getAuthentication();
 
@@ -26,7 +25,6 @@ public class AuthenticatedUserProvider {
     }
     
     public UserRole getAuthenticatedUserRole() {
-    	System.out.println("In get Authenticated User");
     	Authentication auth =
                 SecurityContextHolder.getContext().getAuthentication();
 

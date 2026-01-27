@@ -15,4 +15,14 @@ public interface InvoiceService {
 
 	void addShipment(List<Invoice> invoices, Long shipmentId);
 
+	List<Invoice> getInvoiceByShipmentId(Long shipmentId);
+
+	void markDispatched(List<Invoice> invoices);
+
+	void markReceived(List<Invoice> invoices);
+
+	void markSaved(List<Invoice> invoices);
+
+	void cancelInvoice(Long invoiceId);
+
 }
