@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 
 import com.tracebill.config.JWTUtils;
 import com.tracebill.dto.LoginResponse;
+import com.tracebill.module.audit.enums.AuditAction;
+import com.tracebill.module.audit.service.AuditLogService;
 import com.tracebill.module.auth.dto.LoginUserModel;
 import com.tracebill.module.auth.dto.RegisterUserModel;
 import com.tracebill.module.auth.exception.UserIdAndPasswordNotMatchException;
@@ -28,6 +30,8 @@ public class AuthServiceImpl implements AuthService{
 	
 	private final JWTUtils jwtUtils;
 	
+	private final AuditLogService auditService;
+	
 
 	@Override
 	public LoginResponse authenticate(@Valid LoginUserModel model) {
@@ -39,6 +43,10 @@ public class AuthServiceImpl implements AuthService{
 			return lr;
 		}
 		log.error("Password and Id does not match");
+		auditService.create(
+		        AuditAction.STATUS_CHANGED,
+		        "LOGIN_FAILED email=" + model.getEmail()
+		    );
 		throw new UserIdAndPasswordNotMatchException();
 		
 	}
@@ -52,6 +60,14 @@ public class AuthServiceImpl implements AuthService{
 		CreateUserModel createModel = UserMapper.toCreateUserModel(model, hashedPassword);
 		
 		userService.saveUser(createModel);
+		
+		auditService.create(
+			    AuditAction.CREATED,
+			    "userEmail=" + model.getEmail() + ", role=" + model.getRole()
+			);
+
+		
+		
 		
 	}
 }

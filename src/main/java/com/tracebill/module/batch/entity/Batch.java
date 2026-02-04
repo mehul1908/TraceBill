@@ -54,7 +54,7 @@ public class Batch {
 	private Long version;
 	
 	
-	
+	private String batchHash;
 	
 	
 }

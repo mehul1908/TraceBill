@@ -7,14 +7,14 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.tracebill.module.audit.enums.AuditAction;
+import com.tracebill.module.audit.service.AuditLogService;
 import com.tracebill.module.auth.service.AuthenticatedUserProvider;
-import com.tracebill.module.batch.entity.Batch;
 import com.tracebill.module.inventory.dto.BatchQuantityDTO;
 import com.tracebill.module.inventory.entity.BatchInventory;
 import com.tracebill.module.inventory.entity.ProductInventory;
 import com.tracebill.module.inventory.exception.InsufficientStockException;
 import com.tracebill.module.inventory.repo.BatchInvRepo;
-import com.tracebill.module.logistics.entity.ShipmentItem;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +26,7 @@ public class BatchInvServiceImpl implements BatchInvService {
     private final AuthenticatedUserProvider authenticatedUser;
     private final BatchInvRepo batchInvRepo;
     private final ProductInvService productInvService;
+    private final AuditLogService auditService;
 
     @Override
     @Transactional
@@ -46,7 +47,7 @@ public class BatchInvServiceImpl implements BatchInvService {
         BatchInventory saved = batchInvRepo.save(batchInv);
         if(prodInvId!=null)
         	productInvService.addQuantity(prodInvId, manufacturedQty);
-
+        auditService.create(AuditAction.CREATED, "Batch Inventory Created : " + saved.getBatchInvId());
         return saved.getBatchInvId();
     }
 

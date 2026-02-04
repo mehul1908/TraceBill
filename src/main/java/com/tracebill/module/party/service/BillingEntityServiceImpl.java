@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tracebill.exception.ResourceNotFoundException;
+import com.tracebill.module.audit.enums.AuditAction;
+import com.tracebill.module.audit.service.AuditLogService;
 import com.tracebill.module.party.dto.BillingEntityRegisterModel;
 import com.tracebill.module.party.entity.BillingEntity;
 import com.tracebill.module.party.repo.BillingEntityRepo;
@@ -18,6 +20,9 @@ public class BillingEntityServiceImpl implements BillingEntityService{
 	
 	@Autowired
 	private PartyService partyService;
+	
+	@Autowired
+	private AuditLogService auditService;
 
 	@Override
 	public void createBillingEntity(@Valid BillingEntityRegisterModel model) {
@@ -35,6 +40,7 @@ public class BillingEntityServiceImpl implements BillingEntityService{
 				.build();
 		
 		billingEntityRepo.save(billingEntity);
+		auditService.create(AuditAction.CREATED, "Billing Entity created : " + model.getEmail());
 	}
 
 	@Override

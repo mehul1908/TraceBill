@@ -1,6 +1,7 @@
 package com.tracebill.module.production.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +12,13 @@ import com.tracebill.module.audit.service.AuditLogService;
 import com.tracebill.module.auth.service.AuthenticatedUserProvider;
 import com.tracebill.module.production.dto.ProductRegisterModel;
 import com.tracebill.module.production.entity.Product;
+import com.tracebill.module.production.record.ProductCreationEvent;
 import com.tracebill.module.production.repo.ProductRepo;
 import com.tracebill.module.user.enums.UserRole;
 import com.tracebill.util.HashService;
 import com.tracebill.util.SequenceGeneratorService;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -37,8 +40,12 @@ public class ProductServiceImpl implements ProductService{
 	@Autowired
 	private AuditLogService auditService;
 	
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
+	
 	@Override
 	@PreAuthorize("hasRole('ADMIN')")
+	@Transactional
 	public Long createProduct(ProductRegisterModel model) {
 
 		
@@ -63,7 +70,8 @@ public class ProductServiceImpl implements ProductService{
 				.build();
 		
 		Product saved =productRepo.save(product);
-				
+		eventPublisher.publishEvent(new ProductCreationEvent(saved.getProductId() , saved.getProductHash() , authenticatedUser.getAuthenticatedParty()));
+		auditService.create(AuditAction.CREATED, "Product Created : " + saved.getProdCode());		
 		return saved.getProductId();
 	}
 

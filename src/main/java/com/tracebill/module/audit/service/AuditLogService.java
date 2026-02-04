@@ -4,6 +4,7 @@ import com.tracebill.module.audit.enums.AuditAction;
 
 public interface AuditLogService {
 
-	void create(AuditAction action, String metadata);
+    void create(AuditAction action, String metadata);
 
+    void createSystem(AuditAction action, String metadata, String correlationId);
 }

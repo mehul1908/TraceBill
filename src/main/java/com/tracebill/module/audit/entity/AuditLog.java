@@ -2,6 +2,7 @@ package com.tracebill.module.audit.entity;
 
 import java.time.LocalDateTime;
 
+import com.tracebill.module.audit.domain.AuditActor.ActorType;
 import com.tracebill.module.audit.enums.AuditAction;
 
 import jakarta.persistence.Column;
@@ -25,20 +26,43 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AuditLog {
 
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable=false)
+    @Column(nullable = false)
     private AuditAction action;
 
-    @Column(nullable=false)
-    private Long performedBy;
+    @Column(name = "actor_id")
+    private Long actorId;
 
-    @Builder.Default
-    private LocalDateTime performedAt = LocalDateTime.now();
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ActorType actorType;
 
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime performedAt;
+
+    @Column(length = 2000)
     private String metadata;
+
+    @Column(length = 128)
+    private String correlationId;
+
+    public AuditLog(
+            AuditAction action,
+            Long actorId,
+            ActorType actorType,
+            String metadata,
+            String correlationId
+    ) {
+        this.action = action;
+        this.actorId = actorId;
+        this.actorType = actorType;
+        this.metadata = metadata;
+        this.correlationId = correlationId;
+        this.performedAt = LocalDateTime.now();
+    }
 }
 

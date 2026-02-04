@@ -21,6 +21,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.Comparator;
+import java.util.HexFormat;
 
 @Entity
 @Data
@@ -46,10 +50,53 @@ public class Shipment {
 	
 	@Enumerated(EnumType.STRING)
 	@Builder.Default
+	@Column(length = 25)
 	private ShipmentStatus status = ShipmentStatus.CREATED;
 	
-	@OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL, orphanRemoval = true , fetch = FetchType.EAGER)
 	@Builder.Default
 	private List<ShipmentItem> items = new ArrayList<>();
+	
+	
+
+	@JsonIgnore
+	public String computeHash() {
+	    try {
+	        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+	        StringBuilder payload = new StringBuilder();
+
+	        // ---- shipment level ----
+	        payload.append("shipmentId=").append(shipmentId).append("|");
+	        payload.append("fromPartyId=").append(fromPartyId).append("|");
+	        payload.append("toPartyId=").append(toPartyId).append("|");
+	        payload.append("vehicleId=").append(vehicleId).append("|");
+
+	        // ---- items (sorted for determinism) ----
+	        items.stream()
+	                .sorted(Comparator
+	                        .comparing(ShipmentItem::getBatchId)
+	                        .thenComparing(ShipmentItem::getProductId))
+	                .forEach(item -> {
+	                    payload.append("item[");
+	                    payload.append("productId=").append(item.getProductId()).append(",");
+	                    payload.append("batchId=").append(item.getBatchId()).append(",");
+	                    payload.append("qty=").append(item.getQty()).append(",");
+	                    payload.append("invoiceItemId=")
+	                           .append(item.getInvoiceItemId() == null ? "null" : item.getInvoiceItemId());
+	                    payload.append("]|");
+	                });
+
+	        byte[] hashBytes = digest.digest(
+	                payload.toString().getBytes(StandardCharsets.UTF_8)
+	        );
+
+	        return "0x" + HexFormat.of().formatHex(hashBytes);
+
+	    } catch (Exception ex) {
+	        throw new IllegalStateException("Failed to compute shipment hash", ex);
+	    }
+	}
+
 
 }

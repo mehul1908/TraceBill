@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import com.tracebill.module.audit.enums.AuditAction;
+import com.tracebill.module.audit.service.AuditLogService;
 import com.tracebill.module.auth.service.AuthenticatedUserProvider;
 import com.tracebill.module.logistics.dto.VehicleRegisterModel;
 import com.tracebill.module.logistics.entity.Vehicle;
@@ -18,6 +20,9 @@ public class VehicleServiceImpl implements VehicleService {
 	@Autowired
 	private AuthenticatedUserProvider authenticatedUser;
 	
+	@Autowired
+	private AuditLogService auditService;
+	
 	@Override
 	@PreAuthorize("hasRole('TRANSPORTER')")
 	public String createVehicle(VehicleRegisterModel model) {
@@ -28,6 +33,7 @@ public class VehicleServiceImpl implements VehicleService {
 				.capacity(model.getCapacity())
 				.build();
 		Vehicle savedVehicle = vehicleRepo.save(vehicle);
+		auditService.create(AuditAction.CREATED, "Vehicle Created : " + savedVehicle.getVehicleNo());
 		return savedVehicle.getVehicleNo();
 	}
 

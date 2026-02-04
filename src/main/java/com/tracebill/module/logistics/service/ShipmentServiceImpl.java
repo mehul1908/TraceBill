@@ -1,15 +1,18 @@
 package com.tracebill.module.logistics.service;
 
-import java.lang.module.ResolutionException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import com.tracebill.exception.ResourceNotFoundException;
 import com.tracebill.exception.UnauthorizedUserException;
+import com.tracebill.module.audit.enums.AuditAction;
+import com.tracebill.module.audit.service.AuditLogService;
 import com.tracebill.module.auth.service.AuthenticatedUserProvider;
 import com.tracebill.module.inventory.service.InventoryApplicationService;
 import com.tracebill.module.invoice.entity.Invoice;
@@ -21,6 +24,7 @@ import com.tracebill.module.logistics.dto.ShipmentRegisterModel;
 import com.tracebill.module.logistics.entity.Shipment;
 import com.tracebill.module.logistics.entity.ShipmentItem;
 import com.tracebill.module.logistics.enums.ShipmentStatus;
+import com.tracebill.module.logistics.record.ShipmentDispatchedEvent;
 import com.tracebill.module.logistics.repo.ShipmentRepo;
 import com.tracebill.module.party.service.BillingEntityService;
 import com.tracebill.module.party.service.PartyService;
@@ -50,6 +54,12 @@ public class ShipmentServiceImpl implements ShipmentService {
 	
 	@Autowired
 	private InventoryApplicationService inventoryApplicationService;
+	
+	@Autowired
+	private AuditLogService auditService;
+	
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
 
 	@Override
 	@Transactional
@@ -98,7 +108,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 		Shipment savedShipment = shipmentRepo.save(shipmentAggregate.getShipment());
 
 		invoiceService.addShipment(invoices, savedShipment.getShipmentId());
-
+		auditService.create(AuditAction.SHIPMENT_CREATED, "Shipment Created : " + savedShipment.getShipmentId());
 		return savedShipment.getShipmentId();
 	}
 
@@ -109,7 +119,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 		Shipment shipment = findShipmentById(shipmentId);
 		Long partyId = authenticatedUser.getAuthenticatedParty();
 
-		if (shipment.getStatus() != ShipmentStatus.CREATED) {
+		if (shipment.getStatus() != ShipmentStatus.CREATED && shipment.getStatus() != ShipmentStatus.DISPATCH_PENDING) {
 			throw new IllegalStateException("Shipment is not in dispatchable state: " + shipment.getStatus());
 		}
 
@@ -118,19 +128,25 @@ public class ShipmentServiceImpl implements ShipmentService {
 		}
 
 		shipment.setDispatchTime(LocalDateTime.now());
-		shipment.setStatus(ShipmentStatus.DISPATCHED);
-
+		shipment.setStatus(ShipmentStatus.DISPATCH_PENDING);
+		shipmentRepo.save(shipment);
+		shipment.getItems().size();
+		eventPublisher.publishEvent(new ShipmentDispatchedEvent(shipment.getShipmentId()));
+		
+		
+		
+		
 		List<Invoice> invoices = invoiceService.getInvoiceByShipmentId(shipmentId);
 
 		invoiceService.markDispatched(invoices);
-
+		auditService.create(AuditAction.SHIPMENT_DISPATCHED, "Shipment Dispatched : " + shipment.getShipmentId());
 		return shipment.getShipmentId();
 	}
 
 	@Override
 	public Shipment findShipmentById(Long shipmentId) {
 		return shipmentRepo.findById(shipmentId)
-				.orElseThrow(() -> new ResolutionException("Shipment with given id is not found : " + shipmentId));
+				.orElseThrow(() -> new ResourceNotFoundException("Shipment with given id is not found : " + shipmentId));
 	}
 
 	@Override
@@ -156,6 +172,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 		
 		shipment.setStatus(ShipmentStatus.RECEIVED);
 		Shipment savedShipment = shipmentRepo.save(shipment);
+		auditService.create(AuditAction.SHIPMENT_RECEIVED, "shipment Received: " + savedShipment.getShipmentId());
 		return savedShipment.getShipmentId();
 	}
 
@@ -177,6 +194,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 		
 		shipment.setStatus(ShipmentStatus.CANCELLED);
 		Shipment savedShipment = shipmentRepo.save(shipment);
+		auditService.create(AuditAction.SHIPMENT_CANCELLED, "Shipment Cancelled : " + savedShipment.getShipmentId());
 		return savedShipment.getShipmentId();
 	}
 

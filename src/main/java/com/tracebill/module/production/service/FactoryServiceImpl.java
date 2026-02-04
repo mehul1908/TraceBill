@@ -64,7 +64,7 @@ public class FactoryServiceImpl implements FactoryService{
 
 	    factoryRepo.save(factory);
 	    log.info("Factory {} created successfully", factoryCode);
-		
+		auditService.create(AuditAction.CREATED, "Factory Created : "+factoryCode);
 	    return factory.getFactoryId();
 	}
 

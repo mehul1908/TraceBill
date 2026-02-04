@@ -4,11 +4,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tracebill.exception.ResourceNotFoundException;
 import com.tracebill.exception.UnauthorizedUserException;
+import com.tracebill.module.audit.enums.AuditAction;
+import com.tracebill.module.audit.service.AuditLogService;
 import com.tracebill.module.auth.service.AuthenticatedUserProvider;
 import com.tracebill.module.inventory.dto.BatchQuantityDTO;
 import com.tracebill.module.inventory.service.BatchInvService;
@@ -22,7 +23,6 @@ import com.tracebill.module.invoice.entity.InvoiceItem;
 import com.tracebill.module.invoice.enums.InvoiceStatus;
 import com.tracebill.module.invoice.repo.InvoiceItemRepo;
 import com.tracebill.module.invoice.repo.InvoiceRepo;
-import com.tracebill.module.logistics.enums.ShipmentStatus;
 import com.tracebill.module.party.entity.BillingEntity;
 import com.tracebill.module.party.entity.Party;
 import com.tracebill.module.party.service.BillingEntityService;
@@ -49,6 +49,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceCalculator invoiceCalculator;
     private final InventoryApplicationService inventoryApplicationService;
     private final InvoiceItemRepo invoiceItemRepo;
+    private final AuditLogService auditService;
 
 	@Override
 	@Transactional
@@ -117,7 +118,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 savedInvoice.getInvoiceNo(),
                 model.getItems()
         );
-
+        auditService.create(AuditAction.CREATED, "Invoice Created : " + savedInvoice.getInvoiceNo());
         return savedInvoice.getInvoiceNo();
 	}
 
@@ -218,6 +219,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 		invoice.setStatus(InvoiceStatus.CANCELLED);
 		
 		invoiceRepo.save(invoice);
+		
+		auditService.create(AuditAction.STATUS_CHANGED, "Invoice Cancelled : " + invoice.getInvoiceNo());
 		
 	}
 
