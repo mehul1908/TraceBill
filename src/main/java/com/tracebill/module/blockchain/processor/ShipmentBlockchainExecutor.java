@@ -20,6 +20,7 @@ import com.tracebill.module.blockchain.repo.BlockchainTxnRepo;
 import com.tracebill.module.blockchain.service.BlockchainService;
 import com.tracebill.module.logistics.entity.Shipment;
 import com.tracebill.module.logistics.entity.ShipmentItem;
+import com.tracebill.module.logistics.enums.ShipmentStatus;
 import com.tracebill.module.logistics.service.ShipmentService;
 
 @Component
@@ -69,5 +70,7 @@ public class ShipmentBlockchainExecutor {
         log.info("⛓️ Executing shipment blockchain intent id={}", intent.getId());
         intent.setStatus(BlockchainIntentStatus.SUBMITTED);
         intentRepo.save(intent);
+        shipment.setStatus(ShipmentStatus.DISPATCHED);
+        shipmentService.save(shipment);
     }
 }

@@ -2,15 +2,7 @@ package com.tracebill.module.blockchain.processor;
 
 import org.springframework.stereotype.Component;
 
-import com.tracebill.module.batch.service.BatchService;
 import com.tracebill.module.blockchain.entity.BlockchainIntent;
-import com.tracebill.module.blockchain.enums.BlockchainIntentStatus;
-import com.tracebill.module.blockchain.repo.BlockchainIntentRepo;
-import com.tracebill.module.blockchain.service.BlockchainService;
-import com.tracebill.module.logistics.entity.Shipment;
-import com.tracebill.module.logistics.entity.ShipmentItem;
-import com.tracebill.module.logistics.repo.ShipmentRepo;
-import com.tracebill.module.logistics.service.ShipmentService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +11,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BlockchainIntentProcessor {
 	
-	private final ShipmentService shipmentService;
-	private final BlockchainService blockchainService;
-	private final BlockchainIntentRepo intentRepo;
-	private final BatchService batchService;
-
+	private final BatchBlockchainExecutor batchExecutor;
     private final ShipmentBlockchainExecutor shipmentExecutor;
     private final ProductBlockchainExecutor productExecutor;
+    private final InvoiceBlockchainExecutor invoiceExecutor;
 
     @Transactional
     public void process(BlockchainIntent intent) {
@@ -35,7 +24,12 @@ public class BlockchainIntentProcessor {
                     shipmentExecutor.processShipmentDispatch(intent);
             case PRODUCT_REGISTER ->
             			productExecutor.processProductCreation(intent);
-            
+            case BATCH_CREATE ->
+            			batchExecutor.processBatchCreation(intent);
+            case INVENTORY_TRANSFER ->
+            			batchExecutor.processInventoryTransfer(intent);
+            case INVOICE_ANCHOR ->
+            			invoiceExecutor.processInventoryTransfer(intent);
             default ->
                     throw new IllegalStateException(
                         "Unsupported intent type: " + intent.getIntentType()

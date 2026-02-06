@@ -24,6 +24,7 @@ import com.tracebill.module.logistics.dto.ShipmentRegisterModel;
 import com.tracebill.module.logistics.entity.Shipment;
 import com.tracebill.module.logistics.entity.ShipmentItem;
 import com.tracebill.module.logistics.enums.ShipmentStatus;
+import com.tracebill.module.logistics.record.InventoryTransferEvent;
 import com.tracebill.module.logistics.record.ShipmentDispatchedEvent;
 import com.tracebill.module.logistics.repo.ShipmentRepo;
 import com.tracebill.module.party.service.BillingEntityService;
@@ -167,9 +168,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 		
 		inventoryApplicationService.addFromInvoice(items);
 		
-		List<Invoice> invoices = invoiceService.getInvoiceByShipmentId(shipmentId);
+		List<Invoice> invoices = invoiceService.getInvoiceByShipmentWithItems(shipmentId);
 		invoiceService.markReceived(invoices);
-		
+		eventPublisher.publishEvent(new InventoryTransferEvent(invoices));
 		shipment.setStatus(ShipmentStatus.RECEIVED);
 		Shipment savedShipment = shipmentRepo.save(shipment);
 		auditService.create(AuditAction.SHIPMENT_RECEIVED, "shipment Received: " + savedShipment.getShipmentId());
@@ -196,6 +197,11 @@ public class ShipmentServiceImpl implements ShipmentService {
 		Shipment savedShipment = shipmentRepo.save(shipment);
 		auditService.create(AuditAction.SHIPMENT_CANCELLED, "Shipment Cancelled : " + savedShipment.getShipmentId());
 		return savedShipment.getShipmentId();
+	}
+
+	@Override
+	public void save(Shipment shipment) {
+		shipmentRepo.save(shipment);
 	}
 
 }

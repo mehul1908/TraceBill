@@ -48,6 +48,13 @@ public class BillingEntityServiceImpl implements BillingEntityService{
 		return billingEntityRepo.findByPartyId(partyId)
 				.orElseThrow(() -> new ResourceNotFoundException("Billing Enity with party not found : " + partyId));
 	}
+
+	@Override
+	public BillingEntity getBillingEntityByBillingEntityId(Long toBillingEntityId) {
+		return billingEntityRepo.findById(toBillingEntityId)
+				.orElseThrow(() -> new ResourceNotFoundException("Billing Enity with id not found : " + toBillingEntityId));
+
+	}
 	
 	
 	

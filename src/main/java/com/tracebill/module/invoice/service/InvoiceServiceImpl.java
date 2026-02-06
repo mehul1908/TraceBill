@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import com.tracebill.exception.ResourceNotFoundException;
@@ -21,6 +23,7 @@ import com.tracebill.module.invoice.dto.InvoiceRegisterModel;
 import com.tracebill.module.invoice.entity.Invoice;
 import com.tracebill.module.invoice.entity.InvoiceItem;
 import com.tracebill.module.invoice.enums.InvoiceStatus;
+import com.tracebill.module.invoice.record.InvoiceAnchorEvent;
 import com.tracebill.module.invoice.repo.InvoiceItemRepo;
 import com.tracebill.module.invoice.repo.InvoiceRepo;
 import com.tracebill.module.party.entity.BillingEntity;
@@ -50,6 +53,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InventoryApplicationService inventoryApplicationService;
     private final InvoiceItemRepo invoiceItemRepo;
     private final AuditLogService auditService;
+	private final ApplicationEventPublisher eventPublisher;
 
 	@Override
 	@Transactional
@@ -118,6 +122,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 savedInvoice.getInvoiceNo(),
                 model.getItems()
         );
+        
+        eventPublisher.publishEvent(new InvoiceAnchorEvent(savedInvoice.getInvoiceId()));
         auditService.create(AuditAction.CREATED, "Invoice Created : " + savedInvoice.getInvoiceNo());
         return savedInvoice.getInvoiceNo();
 	}
@@ -222,6 +228,17 @@ public class InvoiceServiceImpl implements InvoiceService {
 		
 		auditService.create(AuditAction.STATUS_CHANGED, "Invoice Cancelled : " + invoice.getInvoiceNo());
 		
+	}
+
+	@Override
+	public InvoiceItem getInvoiceItemByInvoiceItemId(Long invoiceItemId) {
+		return invoiceItemRepo.findById(invoiceItemId)
+				.orElseThrow(() -> new ResourceNotFoundException("Invoice Item with given id is not found :" + invoiceItemId));
+	}
+
+	@Override
+	public List<Invoice> getInvoiceByShipmentWithItems(Long shipmentId) {
+		return invoiceRepo.findByShipmentIdWithItems(shipmentId);
 	}
 
 }

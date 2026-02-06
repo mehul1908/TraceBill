@@ -1,5 +1,7 @@
 package com.tracebill.module.blockchain.service;
 
+import java.math.BigInteger;
+
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 public interface BlockchainService {
@@ -11,5 +13,10 @@ public interface BlockchainService {
     );
 
 	TransactionReceipt productCreation(String prodHash);
+
+	TransactionReceipt batchCreation(String batchHash, String prodHash, BigInteger qty);
+
+	TransactionReceipt invoiceAnchor(String invoiceHash, String to);
+
 }
 

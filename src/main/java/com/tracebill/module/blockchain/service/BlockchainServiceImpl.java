@@ -57,4 +57,33 @@ public class BlockchainServiceImpl implements BlockchainService {
 	            );
 	        }
     }
+    
+    @Override
+    public TransactionReceipt batchCreation( String batchHash , String prodHash , BigInteger qty) {
+	    	try {
+	    		byte[] productHashBytes = Numeric.hexStringToByteArray(prodHash);
+	    		byte[] batchHashBytes = Numeric.hexStringToByteArray(batchHash);
+	    		return contract.registerBatch(batchHashBytes, productHashBytes, qty).send();
+	    	}catch (Exception e) {
+	            throw new IllegalStateException(
+	                    "Blockchain product registration failed for batchHash=" + prodHash,
+	                    e
+	            );
+	        }
+    }
+    
+    @Override
+    public TransactionReceipt invoiceAnchor( String invoiceHash , String to ) {
+	    	try {
+	    		byte[] invoiceHashBytes = Numeric.hexStringToByteArray(invoiceHash);
+	    		return contract.anchorInvoice(invoiceHashBytes, to).send();
+	    	}catch (Exception e) {
+	            throw new IllegalStateException(
+	                    "Blockchain product registration failed for batchHash=" + invoiceHash,
+	                    e
+	            );
+	        }
+    }
+    
+    
 }

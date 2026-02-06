@@ -20,7 +20,7 @@ public class BlockchainIntentScheduler {
 	private final BlockchainIntentRepo intentRepo;
 	private final BlockchainIntentProcessor intentProcessor;
 
-	@Scheduled(fixedDelayString = "${blockchain.intent.poll-interval:5000}")
+	@Scheduled(fixedDelayString = "${blockchain.intent.poll-interval:10000}")
 	public void pollAndProcessIntents() {
 		
 			List<BlockchainIntent> pendingIntents = intentRepo

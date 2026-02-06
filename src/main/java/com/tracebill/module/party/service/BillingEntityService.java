@@ -11,4 +11,6 @@ public interface BillingEntityService {
 
 	BillingEntity getBillingEntityByPartyId(Long partyId);
 
+	BillingEntity getBillingEntityByBillingEntityId(Long toBillingEntityId);
+
 }

@@ -19,6 +19,14 @@ public interface InvoiceRepo extends JpaRepository<Invoice, Long> {
 			    where i.invoiceId = :invoiceId
 			""")
 	Optional<Invoice> findByIdWithItems(Long invoiceId);
+	
+	@Query("""
+		    select i
+		    from Invoice i
+		    left join fetch i.items
+		    where i.shipmentId = :shipment
+		""")
+	List<Invoice> findByShipmentIdWithItems(Long shipment);
 
 	List<Invoice> findByShipmentId(Long shipmentId);
 }

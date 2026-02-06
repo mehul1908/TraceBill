@@ -38,6 +38,9 @@ public class Product {
 	
 	private String prodCode;
 	
+	@Column(name = "hsnCode" , nullable = false , unique = true)
+	private String hsnCode;
+	
 	@Column(nullable = false)
 	private BigDecimal mrp;
 	

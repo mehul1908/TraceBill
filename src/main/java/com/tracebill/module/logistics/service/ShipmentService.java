@@ -15,4 +15,6 @@ public interface ShipmentService {
 
 	Long cancelShipment(Long shipmentId);
 
+	void save(Shipment shipment);
+
 }

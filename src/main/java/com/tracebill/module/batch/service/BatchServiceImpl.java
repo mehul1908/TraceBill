@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import com.tracebill.module.audit.service.AuditLogService;
 import com.tracebill.module.auth.service.AuthenticatedUserProvider;
 import com.tracebill.module.batch.dto.BatchRegisterModel;
 import com.tracebill.module.batch.entity.Batch;
+import com.tracebill.module.batch.record.BatchCreationEvent;
 import com.tracebill.module.batch.repo.BatchRepo;
 import com.tracebill.module.inventory.service.BatchInvService;
 import com.tracebill.module.inventory.service.InventoryTxnService;
@@ -58,6 +60,9 @@ public class BatchServiceImpl implements BatchService {
 
 	@Autowired
 	private HashService hashService;
+	
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
 
 	@Transactional
 	@Override
@@ -91,6 +96,8 @@ public class BatchServiceImpl implements BatchService {
 		batchInvService.createBatchInventory(saved.getBatchId(), prodInvId, model.getManufacturedQty());
 
 		inventoryTxnService.recordProduction(saved.getBatchId(), model.getProductId(), saved.getManufacturedQty());
+		eventPublisher.publishEvent(new BatchCreationEvent(saved.getBatchId() , partyId));
+		
 		auditService.create(AuditAction.CREATED, "Batch Created : " + saved.getBatchNo());
 		return saved.getBatchNo();
 	}

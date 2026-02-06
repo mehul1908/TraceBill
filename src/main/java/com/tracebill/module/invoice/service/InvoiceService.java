@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.tracebill.module.invoice.dto.InvoiceRegisterModel;
 import com.tracebill.module.invoice.entity.Invoice;
+import com.tracebill.module.invoice.entity.InvoiceItem;
 
 public interface InvoiceService {
 
@@ -24,5 +25,9 @@ public interface InvoiceService {
 	void markSaved(List<Invoice> invoices);
 
 	void cancelInvoice(Long invoiceId);
+
+	InvoiceItem getInvoiceItemByInvoiceItemId(Long referenceId);
+	
+	List<Invoice> getInvoiceByShipmentWithItems(Long shipmentId);
 
 }

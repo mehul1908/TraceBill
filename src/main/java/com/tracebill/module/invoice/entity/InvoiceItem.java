@@ -2,6 +2,13 @@ package com.tracebill.module.invoice.entity;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.Comparator;
+import java.util.HexFormat;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tracebill.module.logistics.entity.ShipmentItem;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,5 +60,29 @@ public class InvoiceItem {
 	
 	@Builder.Default
 	private BigDecimal disc = new BigDecimal(0);
+
+	@JsonIgnore
+	public String computeHash() {
+	    try {
+	        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+	        StringBuilder payload = new StringBuilder();
+
+	        // ---- shipment level ----
+	        payload.append("invoiceItemId=").append(invoiceItemId).append("|");
+	        payload.append("qty=").append(qty).append("|");
+	        payload.append("rate=").append(rate).append("|");
+	        payload.append("disc=").append(disc).append("|");
+
+	        byte[] hashBytes = digest.digest(
+	                payload.toString().getBytes(StandardCharsets.UTF_8)
+	        );
+
+	        return "0x" + HexFormat.of().formatHex(hashBytes);
+
+	    } catch (Exception ex) {
+	        throw new IllegalStateException("Failed to compute shipment hash", ex);
+	    }
+	}
 	
 }

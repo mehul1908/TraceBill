@@ -66,6 +66,7 @@ public class ProductServiceImpl implements ProductService{
 				.defaultRate(model.getDefaultRate())
 				.gstRate(model.getGstRate())
 				.cessRate(model.getCessRate())
+				.hsnCode(model.getHsnCode())
 				.productHash(prodHash)
 				.build();
 		

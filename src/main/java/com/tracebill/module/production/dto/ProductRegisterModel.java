@@ -19,6 +19,9 @@ public class ProductRegisterModel {
 
     @NotBlank(message = "Product name cannot be blank")
     private String prodName;
+    
+    @NotBlank(message = "HSN Code cannot be blank")
+    private String hsnCode;
 
     @NotNull(message = "MRP cannot be null")
     @Positive(message = "MRP must be greater than zero")
@@ -35,4 +38,6 @@ public class ProductRegisterModel {
     @NotNull(message = "Cess rate cannot be null")
     @Min(value = 0, message = "Cess rate cannot be negative")
     private BigDecimal cessRate;
+    
+    
 }
